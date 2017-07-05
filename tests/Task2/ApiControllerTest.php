@@ -8,13 +8,29 @@
 class ApiControllerTest extends PHPUnit\Framework\TestCase
 {
 
-    public function getDataProvider()
+    /**
+     * Data Provider for getAuthInfo function test
+     * @return array
+     */
+    public function getAuthInfoDataProvider()
     {
         return [
-            [['email' => 'alihuseyn13@gmail.com' , 'token' => 'zgzv5HgaMK'], ['email' => 'alihuseyn13@gmail.com' , 'token' => 'zgzv5HgaMK']],
-           // [['email' => null , 'token' => null], ['email' => null , 'token' => null]],
-          //  [['email' => '' , 'token' => ''], ['email' => null , 'token' => null]],
-            [[], ['email' => null , 'token' => null]],
+            [
+                ['email' => 'alihuseyn13@gmail.com', 'token' => 'zgzv5HgaMK'],
+                ['email' => 'alihuseyn13@gmail.com', 'token' => 'zgzv5HgaMK']
+            ],
+            [
+                ['email' => null, 'token' => null],
+                ['email' => null, 'token' => null]
+            ],
+            [
+                ['email' => '', 'token' => ''],
+                ['email' => '', 'token' => null]
+            ],
+            [
+                [],
+                ['email' => null, 'token' => null]
+            ],
         ];
     }
 
@@ -31,24 +47,27 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
      *      'email' => 'alihuseyn13@gmail.com'
      *      'token' => 'zgzv5HgaMK'
      *  ]
-     * @dataProvider getDataProvider
+     * @dataProvider getAuthInfoDataProvider
      * @param $request
      * @param $correct
      */
     public function testGetAuthInfo($request, $correct)
     {
-        $requestMock = $this->getMockBuilder(Illuminate\Http\Request::class)
-                            ->getMock();
+        $illuminateRequest = \Illuminate\Http\Request::create('/', 'GET', $request);
+        $this->assertEquals($correct, App\Http\Controllers\API::getAuthInfo($illuminateRequest));
+    }
 
-        if(!empty($request)) {
-            $requestMock->merge(['email' => $request['email'], 'token' => $request['token']]);
-            var_dump($requestMock);
-        }
-
-
-
-        $result = App\Http\Controllers\API::getAuthInfo($requestMock);
-        $this->assertEquals($correct,$result);
+    /**
+     * Data Provider for getErrorContent function text
+     * @return array
+     */
+    public function getErrorContentDataProvider()
+    {
+        return [
+            ['ERR-005', ['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], false],
+            ['NOT-500', \Exception::class, true],
+            [null, \Exception::class, true]
+        ];
     }
 
     /**
@@ -72,10 +91,32 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
      * @example Api::getErrorContent(null);
      *              -  Null error content for:
      *
+     * @dataProvider getErrorContentDataProvider
+     * @param $code
+     * @param $correct
+     * @param $exceptionExists
      */
-    public function testGetErrorContent()
+    public function testGetErrorContent($code, $correct, $exceptionExists)
     {
-        $this->markTestIncomplete();
+        if (!$exceptionExists) {
+            $this->assertEquals($correct, \App\Http\Controllers\API::getErrorContent($code));
+        } else {
+            $this->expectException($correct);
+            \App\Http\Controllers\API::getErrorContent($code);
+        }
+    }
+
+    /**
+     * Data Provider for getErrorContent function test
+     * @return array
+     */
+    public function getSuccessContentDataProvider()
+    {
+        return [
+            ['MSG-002', ['message' => 'New translation is added for given value'], false],
+            ['NOT-500', \Exception::class, true],
+            [null, \Exception::class, true]
+        ];
     }
 
     /**
@@ -97,10 +138,40 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
      * @example Api::getSuccessContent(null);
      *              -  Null error content for:
      *
+     * @dataProvider getSuccessContentDataProvider
+     *
+     * @param $code
+     * @param $correct
+     * @param $exceptionExists
      */
-    public function testGetSuccessContent()
+    public function testGetSuccessContent($code, $correct, $exceptionExists)
     {
-        $this->markTestIncomplete();
+        if (!$exceptionExists) {
+            $this->assertEquals($correct, \App\Http\Controllers\API::getSuccessContent($code));
+        } else {
+            $this->expectException($correct);
+            \App\Http\Controllers\API::getSuccessContent($code);
+        }
+    }
+
+    /**
+     * Data Provider for getBodyParams function test
+     * @return array
+     */
+    public function getBodyParamsDataProvider()
+    {
+        $user_1 = new \App\Model\User();
+        $user_1->id = 5;
+
+        $user_2 = new \App\Model\User();
+        $user_2->id = 10;
+
+        return [
+            [['user' => $user_1, 'value' => 'hello', 'translation' => 'selam'], ['user_id' => '5', 'value' => 'hello', 'translation' => 'selam', 'from' => 'ENG', 'to' => 'TR']],
+            [['user' => $user_2, 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR'], ['user_id' => '10', 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR']],
+            [[], ['user_id' => null, 'value' => null, 'translation' => null, 'from' => 'ENG', 'to' => 'TR']],
+            [['value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR'], ['user_id' => null, 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR']],
+        ];
     }
 
     /**
@@ -131,10 +202,28 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
      *      'to'      => 'TR',
      *   ]
      *
+     * @dataProvider getBodyParamsDataProvider
+     * @param $request
+     * @param $correct
      */
-    public function testGetBodyParams()
+    public function testGetBodyParams($request, $correct)
     {
-        $this->markTestIncomplete();
+        $illuminateRequest = \Illuminate\Http\Request::create('/', 'GET', $request);
+        $api = new App\Http\Controllers\API();
+        $this->assertEquals($correct, $api->getBodyParams($illuminateRequest));
+    }
+
+    /**
+     * Data Provider for getBodyParams function test
+     * @return array
+     */
+    public function getPrettyResponseDataProvider()
+    {
+        return [
+            [['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], true, ['errors' => ['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], 'version' => 'v1.0', 'status' => false]],
+            [['message' => 'Translation for given value has already added by other agent'], false, ['data' => ['message' => 'Translation for given value has already added by other agent'], 'version' => 'v1.0', 'status' => true]],
+            [null, true, ['errors' => null, 'version' => 'v1.0', 'status' => false]],
+        ];
     }
 
     /**
@@ -149,19 +238,42 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
      *      'status' => false,
      *   ]
      *
-     *
+     * @dataProvider getPrettyResponseDataProvider
+     * @param $content
+     * @param $error
+     * @param $correct
      */
-    public function testPrettyResponse()
+    public function testPrettyResponse($content, $error, $correct)
     {
-        $this->markTestIncomplete();
+        $this->assertEquals($correct, \App\Http\Controllers\API::prettyResponse($content, $error));
+    }
+
+    /**
+     * Data Provider for validator function test
+     * @return array
+     */
+    public function getValidatorDataProvider()
+    {
+        return [
+            'success' => [['from' => 'ENG', 'to' => 'TR'], true],
+            'fail_if_not_from' => [['from' => 'AZE', 'to' => 'ENG'], ['ERR-006']],
+            'fail_if_not_to' => [['from' => 'ENG', 'to' => 'AZE'], ['ERR-007']],
+            'fail_if_not_both' => [['from' => 'FR', 'to' => 'AZE'], ['ERR-006', 'ERR-007']],
+        ];
     }
 
     /**
      * This function just validate given params and return array as an output or boolean true.
+     * Validator check whether given from and to content exists or not
      *
+     * @dataProvider getValidatorDataProvider
+     *
+     * @param $params
+     * @param $correct
      */
-    public function testValidator()
+    public function testValidator($params, $correct)
     {
-        $this->markTestIncomplete();
+        $api = new App\Http\Controllers\API();
+        $this->assertEquals($correct, $api->validator($params));
     }
 }

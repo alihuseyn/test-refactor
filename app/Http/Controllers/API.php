@@ -29,7 +29,7 @@ class API extends Controller
      */
     public static function getErrorContent($code)
     {
-        $error =  config("errors.{$code}");
+        $error = config("errors.{$code}");
         if (is_null($error) || empty($error)) {
             throw new Exception("Null error content for: {$code}");
         }
@@ -44,7 +44,7 @@ class API extends Controller
      */
     public static function getSuccessContent($code)
     {
-        $success =  config("success.{$code}");
+        $success = config("success.{$code}");
         if (is_null($success) || empty($success)) {
             throw new Exception("Null success content for: {$code}");
         }
@@ -55,15 +55,18 @@ class API extends Controller
      * For post method, get content of body and return it as array
      * @param $request
      * @return array
+     *
+     * @refactor user id is fetched firstly checking its existence on coming request and set null if not exists
+     *
      */
     public function getBodyParams($request)
     {
         return [
-            'user_id' => $request->user->id,
-            'value'   => $request->has('value') ? $request->value : null,
+            'user_id' => $request->has('user') && isset($request->user->id) ? $request->user->id : null,
+            'value' => $request->has('value') ? $request->value : null,
             'translation' => $request->has('translation') ? $request->translation : null,
-            'from'    => $request->has('from') ? $request->from : config('languages.default_from'),
-            'to'      => $request->has('to') ? $request->to : config('languages.default_to'),
+            'from' => $request->has('from') ? $request->from : config('languages.default_from'),
+            'to' => $request->has('to') ? $request->to : config('languages.default_to'),
         ];
     }
 
@@ -77,13 +80,13 @@ class API extends Controller
      */
     public static function prettyResponse($content, $errorExist = true)
     {
-        if($errorExist) {
+        if ($errorExist) {
             return [
                 'errors' => $content,
                 'version' => 'v1.0',
                 'status' => false,
             ];
-        }else{
+        } else {
             return [
                 'data' => $content,
                 'version' => 'v1.0',
@@ -98,19 +101,21 @@ class API extends Controller
      * - else return $errors array
      * @param array $params
      * @return array|bool
+     *
+     * @refactor Change function accessibility from protected to public
      */
-    protected function validator(array $params)
+    public function validator(array $params)
     {
         $from = config("languages.languages.{$params['from']}");
         $to = config("languages.languages.{$params['to']}");
         $errors = [];
-        if(is_null($from) || empty($from)){
+        if (is_null($from) || empty($from)) {
             array_push($errors, 'ERR-006');
         }
-        if(is_null($to) || empty($to)){
+        if (is_null($to) || empty($to)) {
             array_push($errors, 'ERR-007');
         }
-        if(!empty($errors)) {
+        if (!empty($errors)) {
             return $errors;
         }
         return true;

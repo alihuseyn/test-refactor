@@ -18,6 +18,12 @@ return [
             'prefix' => 'TR',
             'lower' => 'tr',
         ],
+
+        'RU' => [
+            'name' => 'Russian',
+            'prefix' => 'RU',
+            'lower' => 'ru',
+        ],
     ],
 
 ];

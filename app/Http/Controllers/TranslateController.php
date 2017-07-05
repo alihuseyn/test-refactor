@@ -43,7 +43,7 @@ class TranslateController extends API
      * @param array $params
      * @return array|bool
      */
-    protected function validator(array $params)
+    public function validator(array $params)
     {
         $parent = parent::validator($params);
         if(is_null($params['value']) || empty($params['value'])){
