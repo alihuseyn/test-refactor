@@ -16,20 +16,41 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
     {
         return [
             [
-                ['email' => 'alihuseyn13@gmail.com', 'token' => 'zgzv5HgaMK'],
-                ['email' => 'alihuseyn13@gmail.com', 'token' => 'zgzv5HgaMK']
+                [
+                    'email' => 'alihuseyn13@gmail.com',
+                    'token' => 'zgzv5HgaMK'
+                ],
+                [
+                    'email' => 'alihuseyn13@gmail.com',
+                    'token' => 'zgzv5HgaMK'
+                ]
             ],
             [
-                ['email' => null, 'token' => null],
-                ['email' => null, 'token' => null]
+                [
+                    'email' => null,
+                    'token' => null
+                ],
+                [
+                    'email' => null,
+                    'token' => null
+                ]
             ],
             [
-                ['email' => '', 'token' => ''],
-                ['email' => '', 'token' => null]
+                [
+                    'email' => '',
+                    'token' => ''
+                ],
+                [
+                    'email' => '',
+                    'token' => null
+                ]
             ],
             [
                 [],
-                ['email' => null, 'token' => null]
+                [
+                    'email' => null,
+                    'token' => null
+                ]
             ],
         ];
     }
@@ -64,9 +85,25 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
     public function getErrorContentDataProvider()
     {
         return [
-            ['ERR-005', ['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], false],
-            ['NOT-500', \Exception::class, true],
-            [null, \Exception::class, true]
+            [
+                'ERR-005',
+                [
+                    'code'=>'ERR-005',
+                    'message'=>'The <value> is not entered.',
+                    'http_code'=>'400'
+                ],
+                false
+            ],
+            [
+                'NOT-500',
+                \Exception::class,
+                true
+            ],
+            [
+                null,
+                \Exception::class,
+                true
+            ]
         ];
     }
 
@@ -113,9 +150,23 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
     public function getSuccessContentDataProvider()
     {
         return [
-            ['MSG-002', ['message' => 'New translation is added for given value'], false],
-            ['NOT-500', \Exception::class, true],
-            [null, \Exception::class, true]
+            [
+                'MSG-002',
+                [
+                    'message'=>'New translation is added for given value'
+                ],
+                false
+            ],
+            [
+                'NOT-500',
+                \Exception::class,
+                true
+            ],
+            [
+                null,
+                \Exception::class,
+                true
+            ]
         ];
     }
 
@@ -167,10 +218,63 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
         $user_2->id = 10;
 
         return [
-            [['user' => $user_1, 'value' => 'hello', 'translation' => 'selam'], ['user_id' => '5', 'value' => 'hello', 'translation' => 'selam', 'from' => 'ENG', 'to' => 'TR']],
-            [['user' => $user_2, 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR'], ['user_id' => '10', 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR']],
-            [[], ['user_id' => null, 'value' => null, 'translation' => null, 'from' => 'ENG', 'to' => 'TR']],
-            [['value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR'], ['user_id' => null, 'value' => 'privet', 'translation' => 'selam', 'from' => 'RU', 'to' => 'TR']],
+            [
+                [
+                    'user'=>$user_1,
+                    'value'=>'hello',
+                    'translation'=>'selam'
+                ],
+                [
+                    'user_id'=>'5',
+                    'value'=>'hello',
+                    'translation'=>'selam',
+                    'from'=>'ENG',
+                    'to'=>'TR'
+                ]
+            ],
+            [
+                [
+                    'user'=>$user_2,
+                    'value'=>'privet',
+                    'translation'=>'selam',
+                    'from'=>'RU',
+                    'to'=>'TR'
+                ],
+                [
+                    'user_id'=>'10',
+                    'value'=>'privet',
+                    'translation'=>'selam',
+                    'from'=>'RU',
+                    'to'=>'TR'
+                ]
+            ],
+            [
+                [
+
+                ],
+                [
+                    'user_id'=>null,
+                    'value'=>null,
+                    'translation'=>null,
+                    'from'=>'ENG',
+                    'to'=>'TR'
+                ]
+            ],
+            [
+                [
+                    'value'=>'privet',
+                    'translation'=>'selam',
+                    'from'=>'RU',
+                    'to'=>'TR'
+                ],
+                [
+                    'user_id'=>null,
+                    'value'=>'privet',
+                    'translation'=>'selam',
+                    'from'=>'RU',
+                    'to'=>'TR'
+                ]
+            ]
         ];
     }
 
@@ -220,9 +324,45 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
     public function getPrettyResponseDataProvider()
     {
         return [
-            [['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], true, ['errors' => ['code' => 'ERR-005', 'message' => 'The <value> is not entered.', 'http_code' => '400'], 'version' => 'v1.0', 'status' => false]],
-            [['message' => 'Translation for given value has already added by other agent'], false, ['data' => ['message' => 'Translation for given value has already added by other agent'], 'version' => 'v1.0', 'status' => true]],
-            [null, true, ['errors' => null, 'version' => 'v1.0', 'status' => false]],
+            [
+                [
+                    'code'=>'ERR-005',
+                    'message'=>'The <value> is not entered.',
+                    'http_code'=>'400'
+                ],
+                true,
+                [
+                    'errors'=>[
+                        'code'=>'ERR-005',
+                        'message'=>'The <value> is not entered.',
+                        'http_code'=>'400'
+                    ],
+                    'version'=>'v1.0',
+                    'status'=>false
+                ]
+            ],
+            [
+                [
+                    'message'=>'Translation for given value has already added by other agent'
+                ],
+                false,
+                [
+                    'data'=>[
+                        'message'=>'Translation for given value has already added by other agent'
+                    ],
+                    'version'=>'v1.0',
+                    'status'=>true
+                ]
+            ],
+            [
+                null,
+                true,
+                [
+                    'errors'=>null,
+                    'version'=>'v1.0',
+                    'status'=>false
+                ]
+            ]
         ];
     }
 
@@ -255,10 +395,41 @@ class ApiControllerTest extends PHPUnit\Framework\TestCase
     public function getValidatorDataProvider()
     {
         return [
-            'success' => [['from' => 'ENG', 'to' => 'TR'], true],
-            'fail_if_not_from' => [['from' => 'AZE', 'to' => 'ENG'], ['ERR-006']],
-            'fail_if_not_to' => [['from' => 'ENG', 'to' => 'AZE'], ['ERR-007']],
-            'fail_if_not_both' => [['from' => 'FR', 'to' => 'AZE'], ['ERR-006', 'ERR-007']],
+            'success'=>[
+                [
+                    'from'=>'ENG',
+                    'to'=>'TR'
+                ],
+                true
+            ],
+            'fail_if_not_from'=>[
+                [
+                    'from'=>'AZE',
+                    'to'=>'ENG'
+                ],
+                [
+                    'ERR-006'
+                ]
+            ],
+            'fail_if_not_to'=>[
+                [
+                    'from'=>'ENG',
+                    'to'=>'AZE'
+                ],
+                [
+                    'ERR-007'
+                ]
+            ],
+            'fail_if_not_both'=>[
+                [
+                    'from'=>'FR',
+                    'to'=>'AZE'
+                ],
+                [
+                    'ERR-006',
+                    'ERR-007'
+                ]
+            ],
         ];
     }
 

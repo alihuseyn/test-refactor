@@ -139,17 +139,19 @@ class Translate extends Base
     {
         $result = [];
         $language = null;
-        foreach ($translations as $translation) {
-            $language = ($translation->value == $value) ? $translation->from : $translation->to;
-            $result[$translation->from] = isset($result[$translation->from]) ? $result[$translation->from] : [];
-            $result[$translation->to] = isset($result[$translation->to]) ? $result[$translation->to] : [];
+        if(!is_null($value) && !empty($value)) {
+            foreach ($translations as $translation) {
+                $language = ($translation->value == $value) ? $translation->from : $translation->to;
+                $result[$translation->from] = isset($result[$translation->from]) ? $result[$translation->from] : [];
+                $result[$translation->to] = isset($result[$translation->to]) ? $result[$translation->to] : [];
 
-            if (!in_array($translation->value, $result[$translation->from])) {
-                array_push($result[$translation->from], $translation->value);
-            }
+                if (!in_array($translation->value, $result[$translation->from])) {
+                    array_push($result[$translation->from], $translation->value);
+                }
 
-            if (!in_array($translation->translation, $result[$translation->to])) {
-                array_push($result[$translation->to], $translation->translation);
+                if (!in_array($translation->translation, $result[$translation->to])) {
+                    array_push($result[$translation->to], $translation->translation);
+                }
             }
         }
         return self::prettify($result, $value, $language);

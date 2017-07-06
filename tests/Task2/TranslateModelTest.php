@@ -277,5 +277,253 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
         $result = \App\Model\Translate::fetch($search);
         $this->assertEquals($correct, $result);
     }
+
+    /**
+     * Data Provider for prettify function test
+     * @return array
+     */
+    public function getPrettifyDataProvider()
+    {
+        return [
+            [
+                [],
+                null,
+                'ENG',
+                [
+                    'message' => 'Not any result found for request'
+                ]
+            ],
+            [
+                [
+                    'ENG' => [
+                        'hello',
+                        'hi'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ],
+                null,
+                null,
+                [
+                    'ENG' => [
+                        'hello',
+                        'hi'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ]
+            ],
+            [
+                [
+                    'ENG' => [
+                        'hello'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ],
+                'selam',
+                'TR',
+                [
+                    'value' => 'selam',
+                    'language' => 'TR',
+                    'ENG' => [
+                        'hello'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * This function test output correction of prettify function
+     *
+     * function prettify($result, $value = null, $language = null);
+     *
+     * @dataProvider getPrettifyDataProvider
+     *
+     * @param $result
+     * @param $value
+     * @param $lang
+     * @param $correct
+     */
+    public function testPrettify($result, $value, $lang, $correct)
+    {
+        $this->assertEquals($correct, \App\Model\Translate::prettify($result, $value, $lang));
+    }
+
+    /**
+     * Data Provider for parseSingle function test
+     * @return array
+     */
+    public function getParseSingleDataProvider()
+    {
+        return [
+            [
+                'selam',
+                [
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hello'
+                    ]
+                ],
+                [
+                    'value' => 'selam',
+                    'language' => 'TR',
+                    'ENG' => [
+                        'hello'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ]
+            ],
+            [
+                'selam',
+                [
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hello'
+                    ],
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hi'
+                    ]
+                ],
+                [
+                    'value' => 'selam',
+                    'language' => 'TR',
+                    'ENG' => [
+                        'hello',
+                        'hi'
+                    ],
+                    'TR' => [
+                        'selam'
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hello'
+                    ],
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hi'
+                    ]
+                ],
+                [
+                    'message' => 'Not any result found for request'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * This function test parseSingle function correction.
+     *
+     * function parseSingle($value, $translations);
+     *
+     * @dataProvider getParseSingleDataProvider
+     *
+     * @param $value
+     * @param $translations
+     * @param $correct
+     */
+    public function testParseSingle($value, $translations, $correct)
+    {
+        $this->assertEquals($correct, \App\Model\Translate::parseSingle($value, $translations));
+    }
+
+
+    /**
+     * Data Provider for parseWhole function test
+     * @return array
+     */
+    public function getParseWholeDataProvider()
+    {
+        return [
+            [
+                [
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hello'
+                    ]
+                ],
+                [
+                    [
+                        'ENG' => [
+                            'hello'
+                        ],
+                        'TR' => [
+                            'selam'
+                        ]
+                    ]
+                ]
+            ],
+            [
+                [
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hello'
+                    ],
+                    (object)[
+                        'to' => 'ENG',
+                        'from' => 'TR',
+                        'value' => 'selam',
+                        'translation' => 'hi'
+                    ]
+                ],
+                [
+                    [
+                        'ENG' => [
+                            'hello',
+                            'hi'
+                        ],
+                        'TR' => [
+                            'selam'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * This function test parseWhole function correction.
+     *
+     * function function parseWhole($translations);
+     *
+     * @dataProvider getParseWholeDataProvider
+     *
+     * @param $translations
+     * @param $correct
+     *
+     */
+    public function testParseWhole($translations, $correct)
+    {
+        $this->assertEquals($correct, \App\Model\Translate::parseWhole($translations));
+    }
 }
 
