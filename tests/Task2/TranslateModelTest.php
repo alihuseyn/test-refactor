@@ -358,10 +358,10 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data Provider for parseSingle function test
+     * Data Provider for mapSingle function test
      * @return array
      */
-    public function getParseSingleDataProvider()
+    public function getMapSingleDataProvider()
     {
         return [
             [
@@ -441,7 +441,7 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
      *
      * function parseSingle($value, $translations);
      *
-     * @dataProvider getParseSingleDataProvider
+     * @dataProvider getMapSingleDataProvider
      *
      * @param $value
      * @param $translations
@@ -449,15 +449,15 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
      */
     public function testParseSingle($value, $translations, $correct)
     {
-        $this->assertEquals($correct, \App\Model\Translate::parseSingle($value, $translations));
+        $this->assertEquals($correct, \App\Model\Translate::mapSingle($value, $translations));
     }
 
 
     /**
-     * Data Provider for parseWhole function test
+     * Data Provider for mapWhole function test
      * @return array
      */
-    public function getParseWholeDataProvider()
+    public function getMapWholeDataProvider()
     {
         return [
             [
@@ -511,11 +511,11 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * This function test parseWhole function correction.
+     * This function test mapWhole function correction.
      *
      * function function parseWhole($translations);
      *
-     * @dataProvider getParseWholeDataProvider
+     * @dataProvider getMapWholeDataProvider
      *
      * @param $translations
      * @param $correct
@@ -523,7 +523,7 @@ class TranslateModelTest extends PHPUnit\Framework\TestCase
      */
     public function testParseWhole($translations, $correct)
     {
-        $this->assertEquals($correct, \App\Model\Translate::parseWhole($translations));
+        $this->assertEquals($correct, \App\Model\Translate::mapWhole($translations));
     }
 }
 

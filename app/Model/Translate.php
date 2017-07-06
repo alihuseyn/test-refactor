@@ -97,7 +97,7 @@ class Translate extends Base
             $translations = Translate::where('value', '=', $params['value'])->
             orWhere('translation', '=', $params['value'])->get();
 
-            return self::parseSingle($params['value'], $translations);
+            return self::mapSingle($params['value'], $translations);
         } else {
             // In this part all contents are fetched
             // firstly check for from and to values exists or not
@@ -105,7 +105,8 @@ class Translate extends Base
             // else if both exist not any operation required
             // else if non of exists then add operation to result done
             $translations = Translate::all();
-            return self::parseWhole($translations);
+
+            return self::mapWhole($translations);
         }
     }
 
@@ -130,12 +131,12 @@ class Translate extends Base
     }
 
     /**
-     * Parse only for given value inside translation collection
+     * map only for given value inside translation collection
      * @param $value
      * @param $translations
      * @return array|mixed
      */
-    public static function parseSingle($value, $translations)
+    public static function mapSingle($value, $translations)
     {
         $result = [];
         $language = null;
@@ -158,11 +159,11 @@ class Translate extends Base
     }
 
     /**
-     * Translate and generate for given whole collections
+     * Translate and map for given whole collections
      * @param $translations
      * @return array|mixed
      */
-    public static function parseWhole($translations)
+    public static function mapWhole($translations)
     {
         $result = [];
         foreach ($translations as $translation) {
